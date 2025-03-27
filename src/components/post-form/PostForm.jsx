@@ -71,52 +71,77 @@ export default function PostForm({ post }) {
     }, [watch, slugTransform, setValue]);
 
     return (
-        <form onSubmit={handleSubmit(submit)} className="flex flex-wrap">
-            <div className="w-2/3 px-2">
-                <Input
-                    label="Title :"
-                    placeholder="Title"
-                    className="mb-4"
-                    {...register("title", { required: true })}
-                />
-                <Input
-                    label="Slug :"
-                    placeholder="Slug"
-                    className="mb-4"
-                    {...register("slug", { required: true })}
-                    onInput={(e) => {
-                        setValue("slug", slugTransform(e.currentTarget.value), { shouldValidate: true });
-                    }}
-                />
-                <RTE label="Content :" name="content" control={control} defaultValue={getValues("content")} />
-            </div>
-            <div className="w-1/3 px-2">
-                <Input
-                    label="Featured Image :"
-                    type="file"
-                    className="mb-4"
-                    accept="image/png, image/jpg, image/jpeg, image/gif"
-                    {...register("image", { required: !post })}
-                />
-                {post && (
-                    <div className="w-full mb-4">
-                        <img
-                            src={appwriteService.getFilePreview(post.featuredImage)}
-                            alt={post.title}
-                            className="rounded-lg"
-                        />
-                    </div>
-                )}
-                <Select
-                    options={["active", "inactive"]}
-                    label="Status"
-                    className="mb-4"
-                    {...register("status", { required: true })}
-                />
-                <Button type="submit" bgColor={post ? "bg-green-500" : undefined} className="w-full">
-                    {post ? "Update" : "Submit"}
-                </Button>
-            </div>
-        </form>
+        <form onSubmit={handleSubmit(submit)} className="flex flex-wrap bg-white p-6 shadow-md rounded-lg">
+  {/* Left Section */}
+  <div className="w-full md:w-2/3 px-4">
+    <Input
+      label="Title"
+      placeholder="Enter title"
+      className="mb-4 w-full border rounded-lg p-3 text-gray-700 focus:ring-2 focus:ring-blue-400"
+      {...register("title", { required: true })}
+    />
+
+    <Input
+      label="Slug"
+      placeholder="Auto-generated or edit manually"
+      className="mb-4 w-full border rounded-lg p-3 text-gray-700 focus:ring-2 focus:ring-blue-400"
+      {...register("slug", { required: true })}
+      onInput={(e) => {
+        setValue("slug", slugTransform(e.currentTarget.value), { shouldValidate: true });
+      }}
+    />
+
+    {/* Rich Text Editor */}
+    <RTE
+      label="Content"
+      name="content"
+      control={control}
+      defaultValue={getValues("content")}
+      className="border rounded-lg"
+    />
+  </div>
+
+  {/* Right Section */}
+  <div className="w-full md:w-1/3 px-4 mt-6 md:mt-0">
+    {/* File Input with Styling */}
+    <label className="block text-sm font-medium text-gray-700 mb-2">Featured Image</label>
+    <input
+      type="file"
+      accept="image/png, image/jpg, image/jpeg, image/gif"
+      className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none"
+      {...register("image", { required: !post })}
+    />
+
+    {/* Show Existing Image if Post Exists */}
+    {post && (
+      <div className="w-full mb-4 mt-4">
+        <img
+          src={appwriteService.getFilePreview(post.featuredImage)}
+          alt={post.title}
+          className="rounded-lg shadow-md w-full"
+        />
+      </div>
+    )}
+
+    {/* Status Select Dropdown */}
+    <Select
+      options={["active", "inactive"]}
+      label="Status"
+      className="mb-4 w-full border rounded-lg p-3 text-gray-700 focus:ring-2 focus:ring-blue-400"
+      {...register("status", { required: true })}
+    />
+
+    {/* Submit Button */}
+    <Button
+      type="submit"
+      className={`w-full p-3 text-white font-semibold rounded-lg transition ${
+        post ? "bg-green-500 hover:bg-green-600" : "bg-blue-500 hover:bg-blue-600"
+      }`}
+    >
+      {post ? "Update Post" : "Submit Post"}
+    </Button>
+  </div>
+</form>
+
     );
 }
